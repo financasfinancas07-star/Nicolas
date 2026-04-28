@@ -1,0 +1,502 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+.app{background:#f0f4ff;min-height:700px;padding:16px;font-family:var(--font-sans);}
+.top-bar{background:#fff;border-radius:16px;padding:14px 18px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;border:0.5px solid #e0e4f0;}
+.top-bar .title{font-size:17px;font-weight:500;color:#222;}
+.salary-section{display:flex;align-items:center;gap:10px;}
+.salary-label{font-size:12px;color:#888;}
+.salary-value{font-size:18px;font-weight:600;color:#2ecc71;}
+.salary-edit-wrap{display:flex;align-items:center;gap:6px;}
+.salary-edit-wrap input{border:1px solid #d0d4e0;border-radius:8px;padding:5px 10px;font-size:14px;width:130px;background:#f8faff;color:#222;outline:none;}
+.btn-green{background:#2ecc71;color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:13px;font-weight:500;cursor:pointer;}
+.btn-gray{background:#f0f0f0;color:#555;border:none;border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer;}
+.btn-edit-sal{background:none;border:1px solid #2ecc71;color:#2ecc71;border-radius:8px;padding:4px 12px;font-size:12px;cursor:pointer;margin-left:4px;}
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.sum-card{background:#fff;border-radius:12px;padding:12px 14px;border:0.5px solid #e0e4f0;}
+.sum-card .lbl{font-size:11px;color:#888;margin-bottom:3px;}
+.sum-card .val{font-size:17px;font-weight:600;}
+.val-green{color:#2ecc71;} .val-red{color:#e74c3c;} .val-blue{color:#3498db;}
+.tabs-bar{display:flex;gap:8px;margin-bottom:14px;background:#fff;border-radius:12px;padding:8px;border:0.5px solid #e0e4f0;}
+.tab{flex:1;text-align:center;padding:8px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;color:#888;border:none;background:none;transition:all .15s;}
+.tab.active{background:#3498db;color:#fff;}
+.panel{display:none;} .panel.active{display:block;}
+/* DESPESAS */
+.card-box{background:#fff;border-radius:14px;padding:16px;margin-bottom:12px;border:0.5px solid #e0e4f0;}
+.card-title{font-size:14px;font-weight:500;color:#333;margin-bottom:12px;}
+.cat-btns{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+.cat-btn{border:1.5px solid transparent;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;background:#f5f5f5;color:#555;transition:all .15s;}
+.cat-btn.sel{color:#fff;}
+.cat-food.sel,.cat-food:hover{background:#ff6b6b;border-color:#ff6b6b;color:#fff;}
+.cat-transport.sel,.cat-transport:hover{background:#3498db;border-color:#3498db;color:#fff;}
+.cat-health.sel,.cat-health:hover{background:#2ecc71;border-color:#2ecc71;color:#fff;}
+.cat-leisure.sel,.cat-leisure:hover{background:#9b59b6;border-color:#9b59b6;color:#fff;}
+.cat-education.sel,.cat-education:hover{background:#f39c12;border-color:#f39c12;color:#fff;}
+.cat-home.sel,.cat-home:hover{background:#1abc9c;border-color:#1abc9c;color:#fff;}
+.cat-other.sel,.cat-other:hover{background:#95a5a6;border-color:#95a5a6;color:#fff;}
+.input-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+.input-row.three{grid-template-columns:1fr 1fr 1fr;}
+.fin-input{border:1px solid #e0e4f0;border-radius:8px;padding:8px 10px;font-size:13px;background:#f8faff;color:#222;outline:none;width:100%;}
+.btn-add-expense{width:100%;background:#e74c3c;color:#fff;border:none;border-radius:10px;padding:10px;font-size:14px;font-weight:500;cursor:pointer;margin-top:4px;}
+.btn-add-income{width:100%;background:#2ecc71;color:#fff;border:none;border-radius:10px;padding:10px;font-size:14px;font-weight:500;cursor:pointer;margin-top:4px;}
+.btn-add-debt{width:100%;background:#e67e22;color:#fff;border:none;border-radius:10px;padding:10px;font-size:14px;font-weight:500;cursor:pointer;margin-top:4px;}
+.btn-add-card{width:100%;background:#9b59b6;color:#fff;border:none;border-radius:10px;padding:10px;font-size:14px;font-weight:500;cursor:pointer;margin-top:4px;}
+.item-list{display:flex;flex-direction:column;gap:6px;margin-top:10px;}
+.item-row{display:flex;align-items:center;justify-content:space-between;background:#f8faff;border-radius:8px;padding:9px 12px;}
+.item-left{display:flex;align-items:center;gap:8px;}
+.item-cat-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.item-desc{font-size:13px;color:#333;font-weight:500;}
+.item-sub{font-size:11px;color:#999;}
+.item-right{display:flex;align-items:center;gap:8px;}
+.item-amount{font-size:14px;font-weight:600;}
+.item-del{background:none;border:none;color:#ccc;cursor:pointer;font-size:14px;padding:2px 4px;}
+.item-del:hover{color:#e74c3c;}
+.empty{text-align:center;padding:18px;color:#bbb;font-size:13px;}
+/* CALENDÁRIO */
+.cal-nav-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.cal-month-title{font-size:15px;font-weight:500;color:#333;}
+.cal-nav-btn{background:#f0f4ff;border:none;border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:16px;color:#555;}
+.cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px;}
+.cal-weekdays span{text-align:center;font-size:11px;color:#aaa;font-weight:500;padding:3px 0;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-cell{min-height:42px;border-radius:8px;padding:4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;transition:background .1s;}
+.cal-cell:hover{background:#e8f0fe;}
+.cal-cell.other{opacity:.35;}
+.cal-cell.today{background:#e8f6ff;}
+.cal-cell.today .dnum{color:#3498db;font-weight:600;}
+.cal-cell.sel-day{background:#3498db;}
+.cal-cell.sel-day .dnum{color:#fff;font-weight:600;}
+.dnum{font-size:12px;color:#333;margin-bottom:2px;}
+.dot-row{display:flex;gap:2px;flex-wrap:wrap;justify-content:center;}
+.ddot{width:5px;height:5px;border-radius:50%;}
+.dot-e{background:#e74c3c;} .dot-i{background:#2ecc71;} .dot-d{background:#e67e22;} .dot-c{background:#9b59b6;}
+/* DÍVIDAS */
+.debt-type-btns{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}
+.dtype-btn{border:1.5px solid #e0d0b0;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;background:#fff8ee;color:#b07800;}
+.dtype-btn.sel{background:#e67e22;border-color:#e67e22;color:#fff;}
+.debt-item{background:#fff8ee;border:1px solid #f0d090;border-radius:10px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.debt-status{font-size:11px;border-radius:20px;padding:2px 9px;font-weight:500;}
+.debt-pending{background:#ffeaa7;color:#b07800;}
+.debt-paid{background:#d4efdf;color:#1a6e3a;}
+.btn-pay{background:#2ecc71;color:#fff;border:none;border-radius:7px;padding:4px 11px;font-size:12px;cursor:pointer;}
+/* CARTÃO */
+.card-flag{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
+.flag-btn{border:1.5px solid #e0e0f0;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:500;cursor:pointer;background:#f5f5ff;color:#666;}
+.flag-btn.sel{background:#9b59b6;border-color:#9b59b6;color:#fff;}
+.installment-select{border:1px solid #e0e4f0;border-radius:8px;padding:8px 10px;font-size:13px;background:#f8faff;color:#222;outline:none;width:100%;}
+.card-item{background:#f8f0ff;border:1px solid #e0c8f0;border-radius:10px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;}
+.installment-badge{font-size:11px;background:#9b59b6;color:#fff;border-radius:20px;padding:2px 8px;margin-left:6px;}
+</style>
+
+<div class="app">
+  <div class="top-bar">
+    <div class="title">💰 Controle Financeiro</div>
+    <div class="salary-section" id="salSec">
+      <span class="salary-label">Salário:</span>
+      <span class="salary-value" id="salVal">R$ 0,00</span>
+      <button class="btn-edit-sal" onclick="startEditSal()">✏️ Editar</button>
+    </div>
+    <div class="salary-edit-wrap" id="salEdit" style="display:none;">
+      <input type="number" id="salInput" placeholder="Ex: 3000" step="0.01" />
+      <button class="btn-green" onclick="saveSal()">Salvar</button>
+      <button class="btn-gray" onclick="cancelSal()">✕</button>
+    </div>
+  </div>
+
+  <div class="summary-grid">
+    <div class="sum-card"><div class="lbl">Renda</div><div class="val val-green" id="sumInc">R$ 0,00</div></div>
+    <div class="sum-card"><div class="lbl">Gastos</div><div class="val val-red" id="sumExp">R$ 0,00</div></div>
+    <div class="sum-card"><div class="lbl">Saldo</div><div class="val val-blue" id="sumBal">R$ 0,00</div></div>
+  </div>
+
+  <div class="tabs-bar">
+    <button class="tab active" onclick="switchTab('despesas',this)">💸 Despesas</button>
+    <button class="tab" onclick="switchTab('receitas',this)">💵 Receitas</button>
+    <button class="tab" onclick="switchTab('dividas',this)">⚠️ Dívidas</button>
+    <button class="tab" onclick="switchTab('cartao',this)">💳 Cartão</button>
+    <button class="tab" onclick="switchTab('calendario',this)">📅 Calendário</button>
+  </div>
+
+  <!-- DESPESAS -->
+  <div class="panel active" id="panel-despesas">
+    <div class="card-box">
+      <div class="card-title">Categoria</div>
+      <div class="cat-btns">
+        <button class="cat-btn cat-food" onclick="selCat(this,'Alimentação')">🍔 Alimentação</button>
+        <button class="cat-btn cat-transport" onclick="selCat(this,'Transporte')">🚗 Transporte</button>
+        <button class="cat-btn cat-health" onclick="selCat(this,'Saúde')">💊 Saúde</button>
+        <button class="cat-btn cat-leisure" onclick="selCat(this,'Lazer')">🎬 Lazer</button>
+        <button class="cat-btn cat-education" onclick="selCat(this,'Educação')">📚 Educação</button>
+        <button class="cat-btn cat-home" onclick="selCat(this,'Casa')">🏠 Casa</button>
+        <button class="cat-btn cat-other" onclick="selCat(this,'Outros')">📦 Outros</button>
+      </div>
+      <div class="input-row">
+        <input class="fin-input" id="expDesc" placeholder="Descrição" />
+        <input class="fin-input" type="number" id="expVal" placeholder="Valor R$" step="0.01" />
+      </div>
+      <button class="btn-add-expense" onclick="addExpense()">+ Adicionar Despesa</button>
+    </div>
+    <div class="card-box">
+      <div class="card-title">Despesas do mês</div>
+      <div class="item-list" id="expList"><div class="empty">Nenhuma despesa registrada</div></div>
+    </div>
+  </div>
+
+  <!-- RECEITAS -->
+  <div class="panel" id="panel-receitas">
+    <div class="card-box">
+      <div class="card-title">Nova Receita</div>
+      <div class="input-row">
+        <input class="fin-input" id="incDesc" placeholder="Descrição" />
+        <input class="fin-input" type="number" id="incVal" placeholder="Valor R$" step="0.01" />
+      </div>
+      <button class="btn-add-income" onclick="addIncome()">+ Adicionar Receita</button>
+    </div>
+    <div class="card-box">
+      <div class="card-title">Receitas do mês</div>
+      <div class="item-list" id="incList"><div class="empty">Nenhuma receita registrada</div></div>
+    </div>
+  </div>
+
+  <!-- DÍVIDAS -->
+  <div class="panel" id="panel-dividas">
+    <div class="card-box">
+      <div class="card-title">Tipo de Dívida</div>
+      <div class="debt-type-btns">
+        <button class="dtype-btn sel" onclick="selDebtType(this,'Empréstimo')">🏦 Empréstimo</button>
+        <button class="dtype-btn" onclick="selDebtType(this,'Cartão')">💳 Cartão</button>
+        <button class="dtype-btn" onclick="selDebtType(this,'Boleto')">📄 Boleto</button>
+        <button class="dtype-btn" onclick="selDebtType(this,'Pessoa Física')">👤 Pessoa Física</button>
+        <button class="dtype-btn" onclick="selDebtType(this,'Financiamento')">🏠 Financiamento</button>
+        <button class="dtype-btn" onclick="selDebtType(this,'Outros')">📦 Outros</button>
+      </div>
+      <div class="input-row three">
+        <input class="fin-input" id="debtDesc" placeholder="Descrição" />
+        <input class="fin-input" type="number" id="debtVal" placeholder="Valor R$" step="0.01" />
+        <input class="fin-input" type="date" id="debtDate" />
+      </div>
+      <button class="btn-add-debt" onclick="addDebt()">+ Adicionar Dívida</button>
+    </div>
+    <div class="card-box">
+      <div class="card-title">Minhas Dívidas</div>
+      <div class="item-list" id="debtList"><div class="empty">Nenhuma dívida registrada</div></div>
+    </div>
+  </div>
+
+  <!-- CARTÃO -->
+  <div class="panel" id="panel-cartao">
+    <div class="card-box">
+      <div class="card-title">Bandeira do Cartão</div>
+      <div class="card-flag">
+        <button class="flag-btn sel" onclick="selFlag(this,'Visa')">💳 Visa</button>
+        <button class="flag-btn" onclick="selFlag(this,'Mastercard')">💳 Mastercard</button>
+        <button class="flag-btn" onclick="selFlag(this,'Elo')">💳 Elo</button>
+        <button class="flag-btn" onclick="selFlag(this,'Hipercard')">💳 Hipercard</button>
+        <button class="flag-btn" onclick="selFlag(this,'Amex')">💳 Amex</button>
+      </div>
+      <div class="input-row">
+        <input class="fin-input" id="cardDesc" placeholder="Descrição da compra" />
+        <input class="fin-input" type="number" id="cardVal" placeholder="Valor total R$" step="0.01" />
+      </div>
+      <div class="input-row" style="margin-top:8px;">
+        <select class="installment-select" id="cardInstall">
+          <option value="1">À vista (1x)</option>
+          <option value="2">2x</option>
+          <option value="3">3x</option>
+          <option value="4">4x</option>
+          <option value="5">5x</option>
+          <option value="6">6x</option>
+          <option value="7">7x</option>
+          <option value="8">8x</option>
+          <option value="9">9x</option>
+          <option value="10">10x</option>
+          <option value="11">11x</option>
+          <option value="12">12x</option>
+          <option value="18">18x</option>
+          <option value="24">24x</option>
+        </select>
+        <input class="fin-input" id="cardLimit" type="number" placeholder="Limite do cartão R$" step="0.01" />
+      </div>
+      <button class="btn-add-card" onclick="addCard()">+ Adicionar Compra no Cartão</button>
+    </div>
+    <div class="card-box" id="cardLimitBar" style="display:none;">
+      <div class="card-title">Uso do Limite</div>
+      <div style="background:#f0f0f0;border-radius:20px;height:12px;overflow:hidden;margin-bottom:6px;">
+        <div id="limitBarFill" style="height:100%;border-radius:20px;background:#9b59b6;transition:width .4s;"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:#888;">
+        <span>Usado: <b id="limitUsed" style="color:#9b59b6;">R$ 0</b></span>
+        <span>Limite: <b id="limitTotal">R$ 0</b></span>
+      </div>
+    </div>
+    <div class="card-box">
+      <div class="card-title">Compras no Cartão</div>
+      <div class="item-list" id="cardList"><div class="empty">Nenhuma compra registrada</div></div>
+    </div>
+  </div>
+
+  <!-- CALENDÁRIO -->
+  <div class="panel" id="panel-calendario">
+    <div class="card-box">
+      <div class="cal-nav-row">
+        <button class="cal-nav-btn" onclick="calNav(-1)">‹</button>
+        <span class="cal-month-title" id="calTitle"></span>
+        <button class="cal-nav-btn" onclick="calNav(1)">›</button>
+      </div>
+      <div class="cal-weekdays">
+        <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+    <div class="card-box" id="calDayDetail">
+      <div class="card-title" id="calDayTitle">Selecione um dia</div>
+      <div id="calDayItems"><div class="empty">Clique em um dia para ver os lançamentos</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const MONTHS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+let salary=0, selCatVal='Outros', selDebtTypeVal='Empréstimo', selFlagVal='Visa';
+let expenses=[], incomes=[], debts=[], cards=[];
+let calYear=new Date().getFullYear(), calMonth=new Date().getMonth(), calSelDay=new Date().getDate();
+const today=new Date();
+
+function fmt(v){return 'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function id(x){return document.getElementById(x);}
+
+// TAB
+function switchTab(name,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  id('panel-'+name).classList.add('active');
+  if(name==='calendario') renderCal();
+}
+
+// SALÁRIO
+function startEditSal(){
+  id('salSec').style.display='none';
+  id('salEdit').style.display='flex';
+  id('salInput').value=salary||'';
+  id('salInput').focus();
+}
+function saveSal(){
+  salary=parseFloat(id('salInput').value)||0;
+  id('salVal').textContent=fmt(salary);
+  id('salSec').style.display='flex';
+  id('salEdit').style.display='none';
+  updateSummary();
+}
+function cancelSal(){
+  id('salSec').style.display='flex';
+  id('salEdit').style.display='none';
+}
+id('salInput').addEventListener('keydown',e=>{if(e.key==='Enter')saveSal();if(e.key==='Escape')cancelSal();});
+
+// SUMMARY
+function updateSummary(){
+  const totalExp=expenses.reduce((s,e)=>s+e.val,0)+cards.reduce((s,c)=>s+c.val,0);
+  const totalInc=salary+incomes.reduce((s,i)=>s+i.val,0);
+  const bal=totalInc-totalExp;
+  id('sumInc').textContent=fmt(totalInc);
+  id('sumExp').textContent=fmt(totalExp);
+  id('sumBal').textContent=fmt(bal);
+  id('sumBal').className='val '+(bal>=0?'val-green':'val-red');
+}
+
+// CATEGORIAS
+const catColors={'Alimentação':'#ff6b6b','Transporte':'#3498db','Saúde':'#2ecc71','Lazer':'#9b59b6','Educação':'#f39c12','Casa':'#1abc9c','Outros':'#95a5a6'};
+function selCat(btn,cat){
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel'); selCatVal=cat;
+}
+
+// DESPESAS
+function addExpense(){
+  const desc=id('expDesc').value.trim(), val=parseFloat(id('expVal').value);
+  if(!desc||!val||val<=0) return;
+  const now=new Date();
+  expenses.push({id:Date.now(),desc,val,cat:selCatVal,date:now.toISOString().split('T')[0]});
+  id('expDesc').value=''; id('expVal').value='';
+  renderExpenses(); updateSummary();
+}
+function delExpense(eid){expenses=expenses.filter(e=>e.id!==eid);renderExpenses();updateSummary();}
+function renderExpenses(){
+  const el=id('expList');
+  if(!expenses.length){el.innerHTML='<div class="empty">Nenhuma despesa registrada</div>';return;}
+  el.innerHTML=expenses.map(e=>`
+    <div class="item-row">
+      <div class="item-left">
+        <span class="item-cat-dot" style="background:${catColors[e.cat]||'#aaa'}"></span>
+        <div><div class="item-desc">${e.desc}</div><div class="item-sub">${e.cat} · ${e.date}</div></div>
+      </div>
+      <div class="item-right">
+        <span class="item-amount" style="color:#e74c3c">${fmt(e.val)}</span>
+        <button class="item-del" onclick="delExpense(${e.id})">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+// RECEITAS
+function addIncome(){
+  const desc=id('incDesc').value.trim(), val=parseFloat(id('incVal').value);
+  if(!desc||!val||val<=0) return;
+  const now=new Date();
+  incomes.push({id:Date.now(),desc,val,date:now.toISOString().split('T')[0]});
+  id('incDesc').value=''; id('incVal').value='';
+  renderIncomes(); updateSummary();
+}
+function delIncome(iid){incomes=incomes.filter(i=>i.id!==iid);renderIncomes();updateSummary();}
+function renderIncomes(){
+  const el=id('incList');
+  if(!incomes.length){el.innerHTML='<div class="empty">Nenhuma receita registrada</div>';return;}
+  el.innerHTML=incomes.map(i=>`
+    <div class="item-row">
+      <div class="item-left">
+        <span class="item-cat-dot" style="background:#2ecc71"></span>
+        <div><div class="item-desc">${i.desc}</div><div class="item-sub">${i.date}</div></div>
+      </div>
+      <div class="item-right">
+        <span class="item-amount" style="color:#2ecc71">${fmt(i.val)}</span>
+        <button class="item-del" onclick="delIncome(${i.id})">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+// DÍVIDAS
+function selDebtType(btn,type){
+  document.querySelectorAll('.dtype-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel'); selDebtTypeVal=type;
+}
+function addDebt(){
+  const desc=id('debtDesc').value.trim(), val=parseFloat(id('debtVal').value), date=id('debtDate').value;
+  if(!desc||!val||val<=0) return;
+  debts.push({id:Date.now(),desc,val,type:selDebtTypeVal,date,paid:false});
+  id('debtDesc').value=''; id('debtVal').value=''; id('debtDate').value='';
+  renderDebts();
+}
+function delDebt(did){debts=debts.filter(d=>d.id!==did);renderDebts();}
+function payDebt(did){const d=debts.find(x=>x.id===did);if(d)d.paid=!d.paid;renderDebts();}
+function renderDebts(){
+  const el=id('debtList');
+  if(!debts.length){el.innerHTML='<div class="empty">Nenhuma dívida registrada</div>';return;}
+  el.innerHTML=debts.map(d=>`
+    <div class="debt-item" style="margin-bottom:6px;${d.paid?'opacity:.6':''}">
+      <div>
+        <div style="font-size:13px;font-weight:500;color:#333">${d.desc}</div>
+        <div style="font-size:11px;color:#aaa">${d.type}${d.date?' · Venc: '+d.date:''}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:14px;font-weight:600;color:#e67e22">${fmt(d.val)}</span>
+        <span class="debt-status ${d.paid?'debt-paid':'debt-pending'}">${d.paid?'Pago':'Pendente'}</span>
+        <button class="btn-pay" onclick="payDebt(${d.id})" style="${d.paid?'background:#aaa':''}">
+          ${d.paid?'Desfazer':'Pagar'}
+        </button>
+        <button class="item-del" onclick="delDebt(${d.id})">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+// CARTÃO
+function selFlag(btn,flag){
+  document.querySelectorAll('.flag-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel'); selFlagVal=flag;
+}
+function addCard(){
+  const desc=id('cardDesc').value.trim(), val=parseFloat(id('cardVal').value);
+  const install=parseInt(id('cardInstall').value)||1;
+  const limit=parseFloat(id('cardLimit').value)||0;
+  if(!desc||!val||val<=0) return;
+  const perInst=val/install;
+  const now=new Date();
+  cards.push({id:Date.now(),desc,val,install,perInst,flag:selFlagVal,limit,date:now.toISOString().split('T')[0]});
+  id('cardDesc').value=''; id('cardVal').value=''; id('cardInstall').value='1';
+  renderCards(); updateSummary();
+}
+function delCard(cid){cards=cards.filter(c=>c.id!==cid);renderCards();updateSummary();}
+function renderCards(){
+  const el=id('cardList');
+  const totalUsed=cards.reduce((s,c)=>s+c.val,0);
+  const lastLimit=cards.length?cards[cards.length-1].limit:0;
+  if(lastLimit>0){
+    id('cardLimitBar').style.display='block';
+    const pct=Math.min(100,(totalUsed/lastLimit)*100);
+    id('limitBarFill').style.width=pct+'%';
+    id('limitBarFill').style.background=pct>80?'#e74c3c':'#9b59b6';
+    id('limitUsed').textContent=fmt(totalUsed);
+    id('limitTotal').textContent=fmt(lastLimit);
+  }
+  if(!cards.length){el.innerHTML='<div class="empty">Nenhuma compra registrada</div>';return;}
+  el.innerHTML=cards.map(c=>`
+    <div class="card-item" style="margin-bottom:6px;">
+      <div>
+        <div style="font-size:13px;font-weight:500;color:#333;display:flex;align-items:center;gap:6px;">
+          ${c.desc}
+          ${c.install>1?`<span class="installment-badge">${c.install}x de ${fmt(c.perInst)}</span>`:'<span class="installment-badge" style="background:#555">À vista</span>'}
+        </div>
+        <div style="font-size:11px;color:#aaa">${c.flag} · ${c.date}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:14px;font-weight:600;color:#9b59b6">${fmt(c.val)}</span>
+        <button class="item-del" onclick="delCard(${c.id})">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+// CALENDÁRIO
+function calNav(dir){
+  calMonth+=dir;
+  if(calMonth>11){calMonth=0;calYear++;}
+  if(calMonth<0){calMonth=11;calYear--;}
+  renderCal();
+}
+function getDayItems(y,m,d){
+  const dk=y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+  return [
+    ...expenses.filter(e=>e.date===dk).map(e=>({...e,type:'exp'})),
+    ...incomes.filter(i=>i.date===dk).map(i=>({...i,type:'inc'})),
+    ...cards.filter(c=>c.date===dk).map(c=>({...c,type:'card'})),
+    ...debts.filter(db=>db.date===dk).map(db=>({...db,type:'debt'}))
+  ];
+}
+function selectCalDay(d){
+  calSelDay=d;
+  renderCal();
+  const dk=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+  const items=getDayItems(calYear,calMonth,d);
+  id('calDayTitle').textContent=d+' de '+MONTHS[calMonth]+' '+calYear;
+  if(!items.length){id('calDayItems').innerHTML='<div class="empty">Sem lançamentos neste dia</div>';return;}
+  id('calDayItems').innerHTML=items.map(it=>{
+    if(it.type==='exp') return `<div class="item-row"><div class="item-left"><span class="item-cat-dot" style="background:${catColors[it.cat]||'#aaa'}"></span><div><div class="item-desc">${it.desc}</div><div class="item-sub">Despesa · ${it.cat}</div></div></div><div class="item-right"><span class="item-amount" style="color:#e74c3c">${fmt(it.val)}</span></div></div>`;
+    if(it.type==='inc') return `<div class="item-row"><div class="item-left"><span class="item-cat-dot" style="background:#2ecc71"></span><div><div class="item-desc">${it.desc}</div><div class="item-sub">Receita</div></div></div><div class="item-right"><span class="item-amount" style="color:#2ecc71">${fmt(it.val)}</span></div></div>`;
+    if(it.type==='card') return `<div class="item-row"><div class="item-left"><span class="item-cat-dot" style="background:#9b59b6"></span><div><div class="item-desc">${it.desc}</div><div class="item-sub">Cartão ${it.flag}${it.install>1?' · '+it.install+'x':''}</div></div></div><div class="item-right"><span class="item-amount" style="color:#9b59b6">${fmt(it.val)}</span></div></div>`;
+    if(it.type==='debt') return `<div class="item-row"><div class="item-left"><span class="item-cat-dot" style="background:#e67e22"></span><div><div class="item-desc">${it.desc}</div><div class="item-sub">Dívida · ${it.type2||it.type}</div></div></div><div class="item-right"><span class="item-amount" style="color:#e67e22">${fmt(it.val)}</span></div></div>`;
+    return '';
+  }).join('');
+}
+function renderCal(){
+  id('calTitle').textContent=MONTHS[calMonth]+' '+calYear;
+  const first=new Date(calYear,calMonth,1).getDay();
+  const days=new Date(calYear,calMonth+1,0).getDate();
+  const prev=new Date(calYear,calMonth,0).getDate();
+  let html='';
+  for(let i=first-1;i>=0;i--) html+=`<div class="cal-cell other"><span class="dnum">${prev-i}</span></div>`;
+  for(let d=1;d<=days;d++){
+    const isT=d===today.getDate()&&calMonth===today.getMonth()&&calYear===today.getFullYear();
+    const isSel=d===calSelDay;
+    const items=getDayItems(calYear,calMonth,d);
+    const dots=items.map(it=>`<span class="ddot ${it.type==='exp'?'dot-e':it.type==='inc'?'dot-i':it.type==='debt'?'dot-d':'dot-c'}"></span>`).slice(0,4).join('');
+    html+=`<div class="cal-cell${isT?' today':''}${isSel?' sel-day':''}" onclick="selectCalDay(${d})">
+      <span class="dnum">${d}</span>
+      <div class="dot-row">${dots}</div>
+    </div>`;
+  }
+  const used=first+days; const rem=used%7===0?0:7-(used%7);
+  for(let i=1;i<=rem;i++) html+=`<div class="cal-cell other"><span class="dnum">${i}</span></div>`;
+  id('calGrid').innerHTML=html;
+}
+
+renderCal();
+selectCalDay(calSelDay);
+</script>
