@@ -385,9 +385,8 @@ function selectCalDay(d){
     id('calDayTitle').textContent=d+' de '+MONTHS[calMonth]+' '+calYear;
     id('calDayItems').innerHTML='<div class="empty">Sem lançamentos detalhados localmente.</div>';
 }
-} // Esta é a chave que fecha a função selectCalDay
+// ... aqui termina a sua função anterior (selectCalDay)
 
-// --- COLE ESTE BLOCO AQUI ---
 function enviarParaStreamlit(objeto) {
     // Salva para o Python ler no PC ou Celular
     window.dados_financeiros = JSON.stringify(objeto);
@@ -403,5 +402,4 @@ function enviarParaStreamlit(objeto) {
 renderCal();
 </script>
 </body>
-</html>
 </html>
