@@ -5,34 +5,32 @@ import pandas as pd
 # Configuração da página
 st.set_page_config(page_title="Controle Financeiro", layout="wide")
 
-# 1. Cria a conexão com a planilha (Resolve o erro 'conn is not defined')
+# Conexão com a planilha
 conn = st.connection("gsheets", type=GSheetsConnection)
 
-st.title("💰 Teste de Conexão")
+st.title("💰 Controle Financeiro Familiar")
 
-# 2. Botão de teste direto no Streamlit
+# Botão de teste para validar a sincronização
 if st.button("Executar Teste de Gravação"):
     try:
-        # Criamos um dado de exemplo
         df_teste = pd.DataFrame([{
-            "Data": "2026-04-28",
-            "Descrição": "Teste do Marcelo",
-            "Valor": 50.00,
-            "Tipo": "Despesa",
-            "Categoria": "Outros"
+            "data": "2026-04-28",
+            "descricao": "Teste Sincronismo",
+            "valor": 22.00,
+            "categoria": "Outros",
+            "tipo": "Despesa"
         }])
         
-        # Tenta ler os dados existentes e adicionar o novo
-        dados_existentes = conn.read()
+        # Lê os dados da planilha 'Página1'
+        dados_existentes = conn.read(worksheet="Página1")
         df_atualizado = pd.concat([dados_existentes, df_teste], ignore_index=True)
         
-        # Envia para a planilha
-        conn.update(data=df_atualizado)
-        st.success("✅ O teste funcionou! Verifique a sua Planilha do Google agora.")
+        # Atualiza a planilha no Google Drive
+        conn.update(worksheet="Página1", data=df_atualizado)
+        st.success("✅ Gravado na Planilha! Verifique no telemóvel agora.")
     except Exception as e:
-        st.error(f"❌ Erro no teste: {e}")
-        st.info("Dica: Verifique se as credenciais JSON estão nos 'Secrets' do Streamlit Cloud.")
+        st.error(f"Erro: {e}")
 
-# 3. Carrega o seu visual antigo (HTML) abaixo para referência
+# Carrega o seu HTML abaixo
 with open("app_financeiro_completo.html", "r", encoding="utf-8") as f:
     st.components.v1.html(f.read(), height=800, scrolling=True)
