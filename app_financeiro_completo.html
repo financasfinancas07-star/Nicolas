@@ -497,6 +497,43 @@ function renderCal(){
   id('calGrid').innerHTML=html;
 }
 
+// --- SISTEMA DE SALVAMENTO AUTOMÁTICO ---
+
+function salvarNoNavegador() {
+    localStorage.setItem('financas_gastos', JSON.stringify(expenses));
+    localStorage.setItem('financas_renda', JSON.stringify(incomes));
+    localStorage.setItem('financas_salario', salary.toString());
+    localStorage.setItem('financas_dividas', JSON.stringify(debts));
+    localStorage.setItem('financas_cartoes', JSON.stringify(cards));
+}
+
+function carregarDoNavegador() {
+    const d = localStorage.getItem('financas_gastos');
+    const r = localStorage.getItem('financas_renda');
+    const s = localStorage.getItem('financas_salario');
+    const div = localStorage.getItem('financas_dividas');
+    const car = localStorage.getItem('financas_cartoes');
+
+    if (d) expenses = JSON.parse(d);
+    if (r) incomes = JSON.parse(r);
+    if (s) {
+        salary = parseFloat(s);
+        id('salVal').textContent = 'R$ ' + salary.toLocaleString('pt-BR', {minimumFractionDigits:2});
+    }
+    if (div) debts = JSON.parse(div);
+    if (car) cards = JSON.parse(car);
+
+    updateSummary();
+    renderExpenses();
+    renderIncomes();
+    renderDebts();
+    renderCards();
+}
+
+// Executa o carregamento assim que a página abre
+carregarDoNavegador();
 renderCal();
 selectCalDay(calSelDay);
+
+// --- FIM DO SISTEMA DE SALVAMENTO ---
 </script>
