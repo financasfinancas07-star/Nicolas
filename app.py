@@ -1,13 +1,3 @@
-import streamlit as st
-import pandas as pd
-
-# Substitua pelo link da sua planilha
-sheet_url = "https://docs.google.com/spreadsheets/d/1bUYJMbwVfXfcFb_hTWANCLwMhqWhp0DbAjKvhsDvArE/edit?usp=sharing"
-
-# Ajuste o link para exportar como CSV
-csv_url = sheet_url.replace('/edit#gid=', '/export?format=csv&gid=')
-
-# Lê os dados
-df = pd.read_csv(csv_url)
-
-st.write("Dados da Planilha:", df)
+# Link direto de exportação (Substitua SEU_ID pelo código longo que está no seu link)
+id_planilha = "1bUYJMbWVfXfcFb_hTWANCLwMhqwhp0DbAjKvhsDvArE"
+csv_url = f"https://docs.google.com/spreadsheets/d/{id_planilha}/export?format=csv"
