@@ -1,13 +1,13 @@
-# No seu app.py, modifique essa parte:
-if dados_janela:
-    try:
-        dados_dict = json.loads(dados_janela)
-        # Só tenta salvar se houver um valor real
-        if dados_dict.get("val"): 
-            if salvar_no_google_sheets(dados_dict):
-                # LIMPA a variável global para o celular não enviar em loop
-                streamlit_js_eval(js_expressions="window.dados_financeiros = null; window.parent.dados_financeiros = null;", want_output=False)
-                st.success("Dados enviados!")
-                st.rerun()
-    except Exception as e:
-        st.error(f"Erro no processamento: {e}")
+import streamlit as st
+import pandas as pd
+
+# Substitua pelo link da sua planilha
+sheet_url = "https://docs.google.com/spreadsheets/d/1bUYJMbwVfXfcFb_hTWANCLwMhqWhp0DbAjKvhsDvArE/edit?usp=sharing"
+
+# Ajuste o link para exportar como CSV
+csv_url = sheet_url.replace('/edit#gid=', '/export?format=csv&gid=')
+
+# Lê os dados
+df = pd.read_csv(csv_url)
+
+st.write("Dados da Planilha:", df)
