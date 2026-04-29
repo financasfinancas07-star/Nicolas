@@ -40,6 +40,7 @@ st.components.v1.html(html_code, height=750, scrolling=True)
 dados_janela = streamlit_js_eval(js_expressions="window.dados_financeiros", want_output=True)
 
 if dados_janela:
+    st.write(f"Depuração: O Python recebeu isso do celular: {dados_janela}") #
     # Se o dado chegou, salvamos e limpamos a variável para não duplicar
     if salvar_no_google_sheets(json.loads(dados_janela)):
         streamlit_js_eval(js_expressions="window.dados_financeiros = null", want_output=False)
