@@ -1,11 +1,19 @@
 import streamlit as st
 from streamlit_gsheets import GSheetsConnection
 
-# 1. Cria a conexão usando o link dos Secrets
+# Configuração da página
+st.set_page_config(page_title="Controle Financeiro", layout="wide")
+
+# Conecta usando apenas o link dos Secrets (sem JSON/Private Key)
 conn = st.connection("gsheets", type=GSheetsConnection)
 
-# 2. Lê os dados (especifique o nome da aba se necessário, ex: worksheet="Página1")
-df = conn.read()
+st.title("💰 Teste de Sincronização")
 
-# 3. Mostra os dados na tela para testar
-st.write("### Dados Sincronizados:", df)
+# Tente ler os dados
+try:
+    # Lendo especificamente a primeira aba
+    df = conn.read(ttl=0) # ttl=0 força o app a buscar dados novos agora
+    st.write("Conectado com sucesso! Abaixo estão os dados da planilha:")
+    st.dataframe(df)
+except Exception as e:
+    st.error(f"Ainda há um problema: {e}")
