@@ -385,7 +385,24 @@ function selectCalDay(d){
     id('calDayTitle').textContent=d+' de '+MONTHS[calMonth]+' '+calYear;
     id('calDayItems').innerHTML='<div class="empty">Sem lançamentos detalhados localmente.</div>';
 }
+// ... código anterior ...
+} // fecha a função selectCalDay
 
+function enviarParaStreamlit(objeto) {
+    // Salva na variável global para o Python ler
+    window.dados_financeiros = JSON.stringify(objeto);
+    
+    // Envia a mensagem para o Streamlit[cite: 1]
+    window.parent.postMessage({
+        type: 'streamlit:setComponentValue',
+        value: JSON.stringify(objeto)
+    }, '*');
+}
+
+renderCal();
+</script>
+</body>
+</html>
 renderCal();
 </script>
 </body>
